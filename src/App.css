@@ -62,7 +62,7 @@ body {
 
 @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-/* ================= MOBILE STYLES (COMPACT FLUID DECK) ================= */
+/* ================= MOBILE STYLES (LIFTED & ADJUSTED) ================= */
 
 .mobile-cover { position: absolute; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
 .glass-panel-mobile { width: 80vw; max-width: 300px; background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); padding: 30px 20px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.3); animation: float 3s infinite ease-in-out; }
@@ -74,15 +74,16 @@ body {
   display: flex; flex-direction: column; 
   align-items: center; 
   justify-content: center; 
-  padding-bottom: 80px; 
+  /* Reduced padding to bring card down */
+  padding-bottom: 180px; 
   position: relative; perspective: 1000px; 
 }
 
-/* Reduced height to ensure buttons fit */
+/* Card Wrapper */
 .mobile-card-wrapper { 
   width: 82vw; 
   max-width: 320px; 
-  height: 55vh; /* Safe height */
+  height: 55vh; 
   max-height: 460px; 
   min-height: 380px; 
   position: relative; perspective: 1500px; z-index: 10; 
@@ -111,7 +112,7 @@ body {
 .mobile-polaroid img { width: 100%; flex-grow: 1; object-fit: cover; border-radius: 4px; filter: contrast(1.05); }
 .handwritten-caption { font-family: 'Great Vibes', cursive; font-size: 1.4rem; color: #444; text-align: center; margin-top: 8px; line-height: 1; }
 
-/* COMPACT BUTTON - POINTER EVENTS NONE IS CRITICAL */
+/* COMPACT BUTTON */
 .tap-hint-btn {
   position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
   background: #ff4d6d; color: white;
@@ -119,7 +120,7 @@ body {
   font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;
   box-shadow: 0 4px 12px rgba(255, 77, 109, 0.4);
   animation: pulseBtn 2s infinite; 
-  pointer-events: none; /* Allows click to pass through */
+  pointer-events: none; 
   white-space: nowrap;
 }
 @keyframes pulseBtn { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
@@ -145,9 +146,10 @@ body {
 .mobile-letter-content .signature { font-family: 'Great Vibes', cursive; font-size: 1.5rem; color: #800f2f; margin-top: 15px; }
 .back-hint { margin-top: auto; font-size: 0.65rem; color: #bbb; text-transform: uppercase; letter-spacing: 1px; padding-top: 5px;}
 
+/* 3. NAVIGATION: Lifted Even Higher */
 .mobile-nav { 
   position: absolute; 
-  bottom: 5vh; 
+  bottom: 20vh; /* Moved up for better phone visibility */
   display: flex; gap: 20px; align-items: center; z-index: 50; 
   background: rgba(255,255,255,0.15); 
   backdrop-filter: blur(10px); 
