@@ -33,6 +33,7 @@ body::before {
 /* --- SCENE SETUP --- */
 .scene {
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -445,10 +446,14 @@ body::before {
 @media (max-width: 900px) {
   .card-3d-wrap {
     width: min(90vw, 520px);
-    height: min(70vh, 420px);
+    height: min(65vh, 400px);
   }
 
-  .card-content,
+  .card-content {
+    width: 100%;
+    height: 100%;
+  }
+
   .card-left-leaf,
   .card-right-leaf,
   .face {
@@ -457,11 +462,20 @@ body::before {
   }
 
   .card-right-leaf {
-    padding: 28px;
+    padding: 24px 20px;
   }
 
   .polaroid-img {
-    height: 220px;
+    height: 200px;
+  }
+
+  .text-content-wrapper h2 {
+    font-size: 1.8rem;
+  }
+
+  .body-text {
+    font-size: 1rem;
+    line-height: 1.7;
   }
 
   /* Disable 3D tilt on mobile for performance */
@@ -472,13 +486,13 @@ body::before {
 
 @media (max-width: 600px) {
   .scene {
-    padding: 16px;
+    padding: 12px;
   }
 
   .card-3d-wrap {
-    width: 92vw;
-    height: 70vh;
-    max-height: 500px;
+    width: 95vw;
+    height: min(75vh, 550px);
+    max-height: 550px;
   }
 
   .card-content {
@@ -487,95 +501,153 @@ body::before {
   }
 
   .glass-panel {
-    padding: 26px;
+    padding: 24px 20px;
   }
 
   .front-face h1 {
-    font-size: 2.6rem;
+    font-size: 2.4rem;
   }
 
   .click-hint {
     font-size: 0.65rem;
   }
 
+  .card-right-leaf {
+    padding: 20px 18px 70px 18px; /* Extra bottom padding for nav */
+  }
+
+  .text-content-wrapper {
+    height: 100%;
+  }
+
   .text-content-wrapper h2 {
-    font-size: 1.6rem;
-    margin-bottom: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .divider {
+    margin: 8px 0 15px 0;
   }
 
   .body-text {
     font-size: 0.95rem;
-    line-height: 1.7;
+    line-height: 1.65;
   }
 
   .signature {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+    margin-top: 20px;
   }
 
   .polaroid-img {
-    height: 180px;
+    height: 220px;
+  }
+
+  .polaroid-inner {
+    padding: 12px 12px 40px 12px;
+  }
+
+  .handwritten-caption {
+    font-size: 1.5rem;
+  }
+
+  .nav-controls {
+    padding-top: 15px;
   }
 
   .nav-btn {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     font-size: 1.1rem;
-  }
-
-  .card-right-leaf {
-    padding: 25px 20px;
   }
 }
 
 @media (max-width: 420px) {
+  .scene {
+    padding: 8px;
+  }
+
   .card-3d-wrap {
-    height: 65vh;
-    max-height: 480px;
+    width: 96vw;
+    height: min(80vh, 520px);
+    max-height: 520px;
   }
 
   .card-right-leaf {
-    padding: 20px 16px;
+    padding: 18px 14px 65px 14px;
   }
 
   .glass-panel {
-    padding: 20px;
+    padding: 20px 16px;
   }
 
   .front-face h1 {
     font-size: 2rem;
   }
 
+  .heart-seal {
+    font-size: 2.5rem;
+  }
+
   .text-content-wrapper h2 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+  }
+
+  .divider {
+    font-size: 1.2rem;
+    margin: 6px 0 12px 0;
   }
 
   .body-text {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     line-height: 1.6;
   }
 
+  .signature {
+    font-size: 1.2rem;
+    margin-top: 16px;
+  }
+
   .polaroid-img {
-    height: 140px;
+    height: 180px;
+  }
+
+  .polaroid-inner {
+    padding: 10px 10px 35px 10px;
   }
 
   .nav-btn {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .nav-controls {
+    padding-top: 12px;
   }
 
   .handwritten-caption {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 }
 
 /* Landscape orientation on mobile */
 @media (max-height: 500px) and (orientation: landscape) {
+  .scene {
+    padding: 8px;
+  }
+
   .card-3d-wrap {
-    height: 85vh;
+    height: 90vh;
+    width: min(85vw, 600px);
   }
 
   .card-right-leaf {
-    padding: 16px 20px;
+    padding: 14px 18px 55px 18px;
+  }
+
+  .text-content-wrapper h2 {
+    font-size: 1.4rem;
   }
 
   .body-text {
@@ -583,7 +655,16 @@ body::before {
     line-height: 1.5;
   }
 
+  .signature {
+    font-size: 1.1rem;
+    margin-top: 12px;
+  }
+
   .polaroid-img {
-    height: 140px;
+    height: 160px;
+  }
+
+  .nav-controls {
+    padding-top: 10px;
   }
 }
