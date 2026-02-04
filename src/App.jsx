@@ -1,18 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import "./App.css";
 
-// IMPORT YOUR PHOTOS HERE
-// Make sure these files are in your src/assets folder
+// --- ASSETS ---
 import mirrorPic from "./assets/mirror.jpg";
 import closeupPic from "./assets/closeup.jpg";
 
-// --- CONTENT CONFIGURATION ---
+// --- DATA ---
 const pages = [
   {
     id: 0,
-    image: mirrorPic, // Your Mirror Selfie
+    image: mirrorPic,
     caption: "Us, just being us...",
     title: "To My Love,",
     text: (
@@ -26,7 +25,7 @@ const pages = [
   },
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80", // Placeholder (You can replace this too!)
+    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80", 
     caption: "Every heartbeat...",
     title: "Stolen Moments",
     text: (
@@ -40,7 +39,7 @@ const pages = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80", // Placeholder
+    image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80", 
     caption: "Forever & Always",
     title: "Forever Yours",
     text: (
@@ -54,7 +53,7 @@ const pages = [
   },
   {
     id: 3,
-    image: closeupPic, // Your Close-up Photo (The Finale)
+    image: closeupPic,
     caption: "Feb 14, 2026",
     title: "Happy Valentine's",
     text: (
@@ -70,11 +69,47 @@ const pages = [
 ];
 
 function App() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const audioRef = useRef(null);
 
-  // --- 3D Parallax Logic ---
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const playAudio = () => {
+    if (audioRef.current) {
+        audioRef.current.play().catch(e => console.log("Audio play blocked", e));
+    }
+  };
+
+  return (
+    <div className="scene">
+      <audio ref={audioRef} src="https://cdn.pixabay.com/audio/2022/02/07/audio_6593452b31.mp3" loop />
+      
+      <div className="ambient">
+        <div className="aurora a1"></div>
+        <div className="aurora a2"></div>
+      </div>
+      <div className="bg-particles">
+        {[...Array(20)].map((_, i) => <div key={i} className="particle">❤️</div>)}
+      </div>
+
+      {isMobile ? (
+        <MobileDeck playAudio={playAudio} />
+      ) : (
+        <DesktopBook playAudio={playAudio} />
+      )}
+    </div>
+  );
+}
+
+// --- DESKTOP COMPONENT ---
+const DesktopBook = ({ playAudio }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
@@ -91,168 +126,225 @@ function App() {
     y.set(yPct);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  const toggleCard = () => {
+  const toggleBook = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      audioRef.current.play().catch(e => console.log("Audio needed interaction"));
-      fireConfetti(0.7);
+      playAudio();
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 }, colors: ["#ff4d6d", "#fff"] });
     } else {
-      audioRef.current.pause();
-      setPageIndex(0); 
+      setPageIndex(0);
     }
-  };
-
-  const nextPage = (e) => {
-    e.stopPropagation();
-    if (pageIndex < pages.length - 1) {
-      setPageIndex(pageIndex + 1);
-      fireConfetti(0.5);
-    }
-  };
-
-  const prevPage = (e) => {
-    e.stopPropagation();
-    if (pageIndex > 0) {
-      setPageIndex(pageIndex - 1);
-    }
-  };
-
-  const fireConfetti = (yOrigin) => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: yOrigin },
-      colors: ["#ff4d6d", "#ffb3c1", "#fff0f3"],
-      zIndex: 9999,
-    });
   };
 
   return (
-    <div className="scene">
-      <audio ref={audioRef} src="https://cdn.pixabay.com/audio/2022/02/07/audio_6593452b31.mp3" loop />
-      
-      {/* Ambient Layers */}
-      <div className="ambient">
-        <div className="aurora a1"></div>
-        <div className="aurora a2"></div>
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-      </div>
-
-      {/* Chirping Birds */}
-      <div className="birds">
-        <span className="bird b1">🐦</span>
-        <span className="bird b2">🐦</span>
-        <span className="bird b3">🕊️</span>
-        <span className="bird b4">🐦</span>
-      </div>
-
-      {/* Background Particles */}
-      <div className="bg-particles">
-        {[...Array(20)].map((_, i) => <div key={i} className="particle">❤️</div>)}
-      </div>
-
+    <motion.div
+      className="card-3d-wrap"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      style={{ rotateX: isOpen ? 0 : rotateX, rotateY: isOpen ? 0 : rotateY }}
+    >
       <motion.div
-        className="card-3d-wrap"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX: isOpen ? 0 : rotateX, rotateY: isOpen ? 0 : rotateY }}
+        className={`card-content ${isOpen ? "open" : ""}`}
+        onClick={toggleBook}
       >
-        <motion.div
-          className={`card-content ${isOpen ? "open" : ""}`}
-          onClick={toggleCard}
-          initial={false}
-          transition={{ duration: 1, ease: "easeInOut" }} 
-        >
-          {/* --- LEFT SIDE (Cover Front & Inside Left) --- */}
-          <motion.div
-            className="card-left-leaf"
-            animate={{ rotateY: isOpen ? -180 : 0 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-          >
-            {/* FRONT COVER */}
-            <div className="face front-face">
-              <div className="glass-panel">
-                <div className="heart-seal">💌</div>
-                <h1>My Valentine</h1>
-                <p className="click-hint">Tap to Open</p>
-              </div>
+        <motion.div className="card-left-leaf" animate={{ rotateY: isOpen ? -180 : 0 }} transition={{ duration: 1 }}>
+          <div className="face front-face">
+            <div className="glass-panel">
+              <div className="heart-seal">💌</div>
+              <h1>My Valentine</h1>
+              <p className="click-hint">Click to Open</p>
             </div>
-
-            {/* INSIDE LEFT (Dynamic Image) */}
-            <div className="face back-face">
-              <div className="polaroid-wrapper">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={pageIndex}
-                    initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, rotate: 2 }}
-                    transition={{ duration: 0.4 }}
-                    className="polaroid-inner"
-                  >
-                    <div className="back-name">Marian, My Valentine</div>
-                    <img src={pages[pageIndex].image} alt="Memory" className="polaroid-img"/>
-                    <p className="handwritten-caption">{pages[pageIndex].caption}</p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* --- RIGHT SIDE (Static Base) --- */}
-          <div className="card-right-leaf">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pageIndex}
-                className="text-content-wrapper"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <h2>{pages[pageIndex].title}</h2>
-                <div className="divider">✻</div>
-                <p className="body-text">{pages[pageIndex].text}</p>
-                {pages[pageIndex].signature && (
-                  <p className="signature">{pages[pageIndex].signature}</p>
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Navigation Controls */}
-            {isOpen && (
-              <div className="nav-controls" onClick={(e) => e.stopPropagation()}>
-                <button 
-                  className="nav-btn" 
-                  onClick={prevPage} 
-                  disabled={pageIndex === 0}
-                >←</button>
-                
-                <div className="dots">
-                  {pages.map((_, i) => (
-                    <span key={i} className={`dot ${i === pageIndex ? 'active' : ''}`} />
-                  ))}
-                </div>
-
-                <button 
-                  className="nav-btn" 
-                  onClick={nextPage} 
-                  disabled={pageIndex === pages.length - 1}
-                >→</button>
-              </div>
-            )}
           </div>
-
+          <div className="face back-face">
+            <div className="polaroid-inner">
+              <img src={pages[pageIndex].image} alt="Memory" className="polaroid-img" />
+              <p className="handwritten-caption">{pages[pageIndex].caption}</p>
+            </div>
+          </div>
         </motion.div>
+
+        <div className="card-right-leaf">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pageIndex}
+              className="text-content-wrapper"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h2>{pages[pageIndex].title}</h2>
+              <div className="divider">✻</div>
+              <div className="body-text">{pages[pageIndex].text}</div>
+              {pages[pageIndex].signature && <p className="signature">{pages[pageIndex].signature}</p>}
+            </motion.div>
+          </AnimatePresence>
+          {isOpen && (
+            <div className="nav-controls" onClick={(e) => e.stopPropagation()}>
+              <button 
+                className="nav-btn" 
+                onClick={() => {
+                  if (pageIndex > 0) {
+                    setPageIndex(pageIndex - 1);
+                    confetti({ particleCount: 30, spread: 40, origin: { x: 0.2, y: 0.7 }, colors: ["#ff4d6d", "#fff"] });
+                  }
+                }} 
+                disabled={pageIndex === 0}
+              >
+                ←
+              </button>
+              <div className="dots">{pages.map((_, i) => <div key={i} className={`dot ${i===pageIndex ? 'active':''}`}></div>)}</div>
+              <button 
+                className="nav-btn" 
+                onClick={() => {
+                  if (pageIndex < pages.length - 1) {
+                    const newIndex = pageIndex + 1;
+                    setPageIndex(newIndex);
+                    if (newIndex === pages.length - 1) {
+                      confetti({ particleCount: 100, spread: 80, origin: { x: 0.8, y: 0.7 }, colors: ["#ff4d6d", "#ffd700", "#fff"] });
+                    } else {
+                      confetti({ particleCount: 30, spread: 40, origin: { x: 0.8, y: 0.7 }, colors: ["#ff4d6d", "#fff"] });
+                    }
+                  }
+                }} 
+                disabled={pageIndex === pages.length - 1}
+              >
+                →
+              </button>
+            </div>
+          )}
+        </div>
       </motion.div>
+    </motion.div>
+  );
+};
+
+// --- MOBILE COMPONENT (CLEANED UP) ---
+const MobileDeck = ({ playAudio }) => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleStart = () => {
+    setHasStarted(true);
+    playAudio();
+    confetti({ particleCount: 100, spread: 120, origin: { y: 0.5 }, colors: ["#ff4d6d", "#ffd166"] });
+  };
+
+  const handleNext = () => {
+    if (pageIndex < pages.length - 1) {
+      setIsFlipped(false);
+      setTimeout(() => setPageIndex(pageIndex + 1), 300);
+    }
+  };
+
+  const handlePrev = () => {
+    if (pageIndex > 0) {
+      setIsFlipped(false);
+      setTimeout(() => setPageIndex(pageIndex - 1), 300);
+    }
+  };
+
+  const vibrate = () => {
+    if (navigator.vibrate) navigator.vibrate(20); 
+  };
+
+  const handleFlip = () => {
+    vibrate();
+    setIsFlipped(!isFlipped);
+    
+    // Confetti on last page flip
+    if (!isFlipped && pageIndex === pages.length - 1) {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ["#ff4d6d", "#ffd700", "#ff69b4"]
+      });
+    }
+  };
+
+  if (!hasStarted) {
+    return (
+      <motion.div 
+        className="mobile-cover" 
+        onClick={handleStart}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      >
+        <div className="glass-panel-mobile">
+          <div className="heart-seal">💌</div>
+          <h1>For My Love</h1>
+          <p className="click-hint">Tap to Reveal</p>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="mobile-deck-container">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pageIndex}
+          className="mobile-card-wrapper"
+          initial={{ x: 100, opacity: 0, rotate: 5 }}
+          animate={{ x: 0, opacity: 1, rotate: 0 }}
+          exit={{ x: -100, opacity: 0, rotate: -5 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        >
+          {/* THE FLIP CARD - NO DRAG, JUST CLICK */}
+          <div 
+            className={`mobile-flip-card ${isFlipped ? "flipped" : ""}`} 
+            onClick={handleFlip} 
+          >
+            <div className="mobile-card-inner">
+              
+              {/* FRONT: PHOTO */}
+              <div className="mobile-card-front">
+                <div className="mobile-polaroid">
+                  <img src={pages[pageIndex].image} alt="Memory" />
+                  <p className="handwritten-caption">{pages[pageIndex].caption}</p>
+                </div>
+                {/* BUTTON (VISUAL ONLY, CLICK GOES TO CARD) */}
+                <div className="tap-hint-btn">
+                  <span>👆 Tap to Read Letter</span>
+                </div>
+              </div>
+
+              {/* BACK: ROMANTIC TEXT */}
+              <div className="mobile-card-back">
+                <div className="mobile-letter-content">
+                  <h2>{pages[pageIndex].title}</h2>
+                  <div className="divider">✻</div>
+                  <div className="body-text">{pages[pageIndex].text}</div>
+                  <p className="signature">{pages[pageIndex].signature || "Love, Me"}</p>
+                </div>
+                <div className="back-hint">Tap to see photo</div>
+              </div>
+
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="mobile-nav">
+        <button 
+          className="nav-btn" 
+          onClick={(e) => { e.stopPropagation(); vibrate(); handlePrev(); }} 
+          disabled={pageIndex === 0}
+        >
+          ←
+        </button>
+        <span className="page-indicator">{pageIndex + 1} / {pages.length}</span>
+        <button 
+          className="nav-btn" 
+          onClick={(e) => { e.stopPropagation(); vibrate(); handleNext(); }} 
+          disabled={pageIndex === pages.length - 1}
+        >
+          →
+        </button>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
