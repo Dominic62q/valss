@@ -6,6 +6,7 @@ import "./App.css";
 // --- ASSETS ---
 import mirrorPic from "./assets/mirror.jpg";
 import closeupPic from "./assets/closeup.jpg";
+import couplePic from "./assets/couple.jpg";
 
 // --- DATA ---
 const pages = [
@@ -39,7 +40,7 @@ const pages = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80", 
+    image: couplePic, 
     caption: "Forever & Always",
     title: "Forever Yours",
     text: (
@@ -86,7 +87,7 @@ function App() {
 
   return (
     <div className="scene">
-      <audio ref={audioRef} src="https://cdn.pixabay.com/audio/2022/02/07/audio_6593452b31.mp3" loop />
+      <audio ref={audioRef} src="/love-song.mp3" loop />
       
       <div className="ambient">
         <div className="aurora a1"></div>
@@ -219,7 +220,7 @@ const DesktopBook = ({ playAudio }) => {
   );
 };
 
-// --- MOBILE COMPONENT (CLEANED UP) ---
+// --- MOBILE COMPONENT ---
 const MobileDeck = ({ playAudio }) => {
   const [hasStarted, setHasStarted] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
@@ -273,7 +274,7 @@ const MobileDeck = ({ playAudio }) => {
       >
         <div className="glass-panel-mobile">
           <div className="heart-seal">💌</div>
-          <h1>For My Love</h1>
+          <h1>For My Semi Wife</h1>
           <p className="click-hint">Tap to Reveal</p>
         </div>
       </motion.div>
@@ -291,7 +292,7 @@ const MobileDeck = ({ playAudio }) => {
           exit={{ x: -100, opacity: 0, rotate: -5 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         >
-          {/* THE FLIP CARD - NO DRAG, JUST CLICK */}
+          {/* THE FLIP CARD - SIMPLE CLICK HANDLER */}
           <div 
             className={`mobile-flip-card ${isFlipped ? "flipped" : ""}`} 
             onClick={handleFlip} 
@@ -304,7 +305,7 @@ const MobileDeck = ({ playAudio }) => {
                   <img src={pages[pageIndex].image} alt="Memory" />
                   <p className="handwritten-caption">{pages[pageIndex].caption}</p>
                 </div>
-                {/* BUTTON (VISUAL ONLY, CLICK GOES TO CARD) */}
+                {/* BUTTON (VISUAL ONLY) */}
                 <div className="tap-hint-btn">
                   <span>👆 Tap to Read Letter</span>
                 </div>
@@ -316,7 +317,7 @@ const MobileDeck = ({ playAudio }) => {
                   <h2>{pages[pageIndex].title}</h2>
                   <div className="divider">✻</div>
                   <div className="body-text">{pages[pageIndex].text}</div>
-                  <p className="signature">{pages[pageIndex].signature || "Love, Me"}</p>
+                  <p className="signature">{pages[pageIndex].signature || "Love, your semi husband"}</p>
                 </div>
                 <div className="back-hint">Tap to see photo</div>
               </div>
